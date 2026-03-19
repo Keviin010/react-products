@@ -14,7 +14,7 @@ Frontend en React + Vite para gestión de productos (CRUD), conectado a un backe
 - Axios
 - SweetAlert2
 
-**Backend** *(en desarrollo)*
+**Backend** (en desarrollo)
 - Java 21
 - Spring Boot
 - Spring Data JPA
