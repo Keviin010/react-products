@@ -1,6 +1,7 @@
 # React + Vite
-
 ### react-products
+
+> ⚠️ Proyecto en construcción — el backend aún está en desarrollo.
 
 Frontend en React + Vite para gestión de productos (CRUD), conectado a un backend Spring Boot.
 
@@ -13,7 +14,7 @@ Frontend en React + Vite para gestión de productos (CRUD), conectado a un backe
 - Axios
 - SweetAlert2
 
-**Backend**
+**Backend** *(en desarrollo)*
 - Java 21
 - Spring Boot
 - Spring Data JPA
