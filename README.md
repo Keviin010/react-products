@@ -1,8 +1,41 @@
 # React + Vite
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+### react-products
 
-Currently, two official plugins are available:
+Frontend en React + Vite para gestión de productos (CRUD), conectado a un backend Spring Boot.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+## Stack
+
+**Frontend**
+- React 18
+- Vite
+- Bootstrap 5
+- Axios
+- SweetAlert2
+
+**Backend**
+- Java 21
+- Spring Boot
+- Spring Data JPA
+- MySQL
+
+## Correr el proyecto
+
+```bash
+npm install
+npm run dev
+```
+
+## Backend esperado
+
+```
+GET    /api/products
+POST   /api/products
+PUT    /api/products/{id}
+DELETE /api/products/{id}
+```
+
+Configura la URL en `src/services/productService.js`.
+
+## Autor
+Kevin — [@Keviin010](https://github.com/Keviin010)
