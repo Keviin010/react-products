@@ -43,4 +43,4 @@ Repositorio del backend en Spring Boot: [products-backend](https://github.com/Ke
 
 ## Autor
 
-Kevin — [@Keviin010](https://github.com/Keviin010) · [LinkedIn](https://www.linkedin.com/in/kevin-royo-09a427216/)
+Kevin Royo— [@Keviin010](https://github.com/Keviin010) · [LinkedIn](https://www.linkedin.com/in/kevin-royo-09a427216/)
