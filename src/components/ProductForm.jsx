@@ -15,7 +15,6 @@ export const ProductForm = ({ handlerAdd, productSelected }) => {
 
     const { id, name, description, price } = form;
 
-    // Cuando selecciono un producto desde la tabla, cargo sus datos en el form
     useEffect(() => {
         setForm(productSelected);
         setErrors({});
@@ -26,7 +25,6 @@ export const ProductForm = ({ handlerAdd, productSelected }) => {
         setErrors({ ...errors, [e.target.name]: '' });
     };
 
-    // Valido cada campo antes de enviar
     const validate = () => {
         const e = {};
         if (!name.trim()) e.name = 'El nombre es requerido';
@@ -35,16 +33,18 @@ export const ProductForm = ({ handlerAdd, productSelected }) => {
         return e;
     };
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
         const validationErrors = validate();
         if (Object.keys(validationErrors).length > 0) {
             setErrors(validationErrors);
             return;
         }
-        handlerAdd({ ...form, price: Number(price) });
-        setForm(initialForm);
-        setErrors({});
+        const saved = await handlerAdd({ ...form, name: name.trim(), description: description.trim(), price: Number(price) });
+        if (saved) {
+            setForm(initialForm);
+            setErrors({});
+        }
     };
 
     return (
@@ -93,7 +93,10 @@ export const ProductForm = ({ handlerAdd, productSelected }) => {
                 <button
                     type="button"
                     className="btn btn-secondary ms-2"
-                    onClick={() => setForm(initialForm)}
+                    onClick={() => {
+                        setForm(initialForm);
+                        setErrors({});
+                    }}
                 >
                     Cancelar
                 </button>

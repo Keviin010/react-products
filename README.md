@@ -1,46 +1,66 @@
 # react-products
 
+Interfaz de gestión de productos (CRUD) hecha con React, Vite y Bootstrap, conectada a una API de Spring Boot.
+
 ![React](https://img.shields.io/badge/React-18-%2361DAFB.svg?style=flat&logo=react&logoColor=white)
 ![Vite](https://img.shields.io/badge/Vite-6-%23646CFF.svg?style=flat&logo=vite&logoColor=white)
 ![Bootstrap](https://img.shields.io/badge/Bootstrap-5-%237952B3.svg?style=flat&logo=bootstrap&logoColor=white)
 ![Axios](https://img.shields.io/badge/Axios-1.7-5A29E4?style=flat)
-![Status](https://img.shields.io/badge/status-activo-brightgreen)
 
-Frontend en React + Vite para gestión de productos (CRUD), conectado a un backend Spring Boot.
+Backend: [products-backend](https://github.com/Keviin010/products-backend) (Spring Boot y PostgreSQL).
 
-## Stack
+## Qué hace
 
-**Frontend**
-- React 18 · Vite · Bootstrap 5
-- Axios · SweetAlert2
+- Lista los productos en una tabla con el precio en pesos colombianos.
+- Crea, edita y elimina productos, con avisos de SweetAlert2 y confirmación antes de borrar.
+- Valida el formulario antes de enviarlo y conserva lo escrito si el servidor falla.
+- Busca productos por nombre.
+- Si el servidor está dormido, lo indica y reintenta la conexión cada 4 segundos hasta por un minuto.
 
-**Backend**
-- Java 21 · Spring Boot · Spring Data JPA · MySQL
+## Tecnologías
 
-## Correr el proyecto
+React 18, Vite, Bootstrap 5, Axios y SweetAlert2.
+
+## Cómo ejecutarlo en tu computador
+
+1. Instala las dependencias:
 
 ```bash
 npm install
+```
+
+2. Ejecuta la aplicación:
+
+```bash
 npm run dev
 ```
 
-La app corre en `http://localhost:5173`
+La aplicación queda en `http://localhost:5173` y se conecta al backend en `http://localhost:8080`.
 
-## Endpoints del backend
+## Dirección del backend
 
-| Método | Endpoint | Descripción |
-|--------|----------|-------------|
-| GET | `/api/products` | Listar todos |
-| POST | `/api/products` | Crear producto |
-| PUT | `/api/products/{id}` | Actualizar producto |
-| DELETE | `/api/products/{id}` | Eliminar producto |
+La dirección sale de la variable `VITE_API_URL`. Si no existe, usa `http://localhost:8080`. Para apuntar a otro servidor, crea un archivo `.env` en la raíz con esta línea:
 
-Configura la URL en `src/services/productService.js`.
+```
+VITE_API_URL=https://tu-backend.onrender.com
+```
 
-## Backend
+## Despliegue en Vercel
 
-Repositorio del backend en Spring Boot: [products-backend](https://github.com/Keviin010/products-backend)
+1. Importa este repositorio en Vercel. Detecta Vite solo y deja el Root Directory en `./`.
+2. Abre Environment Variables y agrega `VITE_API_URL` con la dirección de tu backend en Render, sin barra al final.
+3. Pulsa Deploy.
+4. Si cambias la variable después, haz Redeploy para que se aplique.
+
+## Rutas del backend
+
+| Método | Ruta | Descripción |
+| --- | --- | --- |
+| GET | `/api/products` | Lista todos los productos |
+| POST | `/api/products` | Crea un producto |
+| PUT | `/api/products/{id}` | Actualiza un producto |
+| DELETE | `/api/products/{id}` | Elimina un producto |
 
 ## Autor
 
-Kevin Royo— [@Keviin010](https://github.com/Keviin010) · [LinkedIn](https://www.linkedin.com/in/kevin-royo-09a427216/)
+Kevin Royo, [@Keviin010](https://github.com/Keviin010) · [LinkedIn](https://www.linkedin.com/in/kevin-royo-09a427216/)
