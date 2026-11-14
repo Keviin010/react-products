@@ -1,10 +1,12 @@
 # react-products
 
-Interfaz de gestión de productos (CRUD) hecha con React y Vite, con CSS propio, conectada a una API de Spring Boot.
+Interfaz de gestión de productos (CRUD) hecha con React y Vite, con CSS propio, conectada a una API de Spring Boot y PostgreSQL.
 
 **Demo en línea:** https://react-products-sooty.vercel.app
 
 El backend gratuito se apaga tras 15 minutos sin visitas. Si la página tarda en cargar, es el servidor despertando: espera hasta un minuto.
+
+![Vista de la aplicación](captura.png)
 
 ![React](https://img.shields.io/badge/React-18-%2361DAFB.svg?style=flat&logo=react&logoColor=white)
 ![Vite](https://img.shields.io/badge/Vite-6-%23646CFF.svg?style=flat&logo=vite&logoColor=white)
@@ -17,15 +19,29 @@ Backend: [products-backend](https://github.com/Keviin010/products-backend) (Spri
 
 - Lista los productos con el precio en pesos colombianos dentro de una etiqueta.
 - Muestra una vista previa de la etiqueta mientras escribes en el formulario.
-- Crea, edita y elimina productos, con avisos de SweetAlert2 y confirmación antes de borrar.
+- Crea, edita y elimina productos. Avisa con mensajes de SweetAlert2 y pide confirmación antes de borrar.
+- Marca la fila que estás editando y resalta la que acabas de guardar.
 - Valida el formulario antes de enviarlo y conserva lo escrito si el servidor falla.
 - Busca productos por nombre.
-- Si el servidor está dormido, lo indica y reintenta la conexión cada 4 segundos hasta por un minuto.
+- Si el servidor está dormido, lo indica y reintenta la conexión cada 4 segundos hasta por un minuto, mostrando el número de intento.
 - Se adapta a computador y celular.
 
 ## Tecnologías
 
 React 18, Vite, CSS propio, Axios y SweetAlert2. Las fuentes (Familjen Grotesk y Barlow Condensed) se instalan con npm, así que no dependen de ningún servicio externo.
+
+## Estructura
+
+| Archivo | Para qué sirve |
+| --- | --- |
+| `src/ProductsApp.jsx` | Estado de la aplicación y lógica de crear, editar y eliminar |
+| `src/components/ProductForm.jsx` | Formulario con validación y vista previa de la etiqueta |
+| `src/components/ProductList.jsx` | Lista de productos con los botones de editar y eliminar |
+| `src/components/PriceTag.jsx` | Etiqueta amarilla con el precio |
+| `src/services/productService.js` | Llamadas a la API con Axios |
+| `src/utils/formatPrice.js` | Formato del precio en pesos colombianos |
+| `src/config.js` | Dirección del backend y número de reintentos |
+| `src/index.css` | Estilos de toda la aplicación |
 
 ## Cómo ejecutarlo en tu computador
 
@@ -69,4 +85,4 @@ VITE_API_URL=https://tu-backend.onrender.com
 
 ## Autor
 
-Kevin Royo, [@Keviin010](https://github.com/Keviin010) · [LinkedIn](https://www.linkedin.com/in/kevin-royo-09a427216/)
+Kevin Royo, [@Keviin010](https://github.com/Keviin010) y [LinkedIn](https://www.linkedin.com/in/kevin-royo-09a427216/).
