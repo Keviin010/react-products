@@ -1,25 +1,36 @@
 import PropTypes from 'prop-types';
 import { useEffect, useState } from 'react';
 import Swal from 'sweetalert2';
-import { ProductTable } from './components/ProductTable';
+import { ProductList } from './components/ProductList';
 import { ProductForm } from './components/ProductForm';
 import { create, findAll, remove, update } from './services/productService';
 import { MAX_ATTEMPTS } from './config';
 
 const initialSelected = { id: 0, name: '', description: '', price: '' };
 
+const Toast = Swal.mixin({
+    toast: true,
+    position: 'top-end',
+    showConfirmButton: false,
+    timer: 2200,
+    timerProgressBar: true,
+});
+
 export const ProductsApp = ({ title = 'Gestión de Productos' }) => {
 
     const [products, setProducts] = useState([]);
     const [productSelected, setProductSelected] = useState(initialSelected);
     const [loading, setLoading] = useState(true);
-    const [error, setError] = useState(null);
+    const [error, setError] = useState(false);
+    const [attempt, setAttempt] = useState(1);
     const [search, setSearch] = useState('');
+    const [savedId, setSavedId] = useState(null);
 
     const getProducts = async () => {
         setLoading(true);
-        setError(null);
-        for (let attempt = 1; attempt <= MAX_ATTEMPTS; attempt++) {
+        setError(false);
+        for (let current = 1; current <= MAX_ATTEMPTS; current++) {
+            setAttempt(current);
             try {
                 const result = await findAll();
                 setProducts(result.data);
@@ -27,12 +38,12 @@ export const ProductsApp = ({ title = 'Gestión de Productos' }) => {
                 return;
             } catch (err) {
                 console.error(err);
-                if (attempt < MAX_ATTEMPTS) {
+                if (current < MAX_ATTEMPTS) {
                     await new Promise((resolve) => setTimeout(resolve, 4000));
                 }
             }
         }
-        setError('No se pudo conectar con el servidor. Verifica que el backend esté corriendo.');
+        setError(true);
         setLoading(false);
     };
 
@@ -40,33 +51,34 @@ export const ProductsApp = ({ title = 'Gestión de Productos' }) => {
         getProducts();
     }, []);
 
+    useEffect(() => {
+        if (savedId === null) return;
+        const timer = setTimeout(() => setSavedId(null), 1800);
+        return () => clearTimeout(timer);
+    }, [savedId]);
+
     const handlerAddProduct = async (product) => {
         try {
             if (product.id > 0) {
                 const response = await update(product);
                 setProducts((current) => current.map((p) => (p.id === product.id ? response.data : p)));
-                Swal.fire({
-                    title: 'Actualizado!',
-                    text: `"${product.name}" fue actualizado con éxito.`,
-                    icon: 'success',
-                    timer: 2000,
-                    showConfirmButton: false,
-                });
+                setSavedId(product.id);
+                Toast.fire({ icon: 'success', title: 'Cambios guardados' });
             } else {
                 const response = await create(product);
                 setProducts((current) => [...current, response.data]);
-                Swal.fire({
-                    title: 'Creado!',
-                    text: `"${product.name}" fue creado con éxito.`,
-                    icon: 'success',
-                    timer: 2000,
-                    showConfirmButton: false,
-                });
+                setSavedId(response.data.id);
+                Toast.fire({ icon: 'success', title: 'Producto creado' });
             }
             setProductSelected({ ...initialSelected });
             return true;
         } catch (err) {
-            Swal.fire('Error', 'No se pudo guardar el producto.', 'error');
+            Swal.fire({
+                icon: 'error',
+                title: 'No se pudo guardar',
+                text: 'Revisa tu conexión e inténtalo de nuevo. Lo que escribiste sigue en el formulario.',
+                confirmButtonColor: '#0F7B63',
+            });
             console.error(err);
             return false;
         }
@@ -74,17 +86,21 @@ export const ProductsApp = ({ title = 'Gestión de Productos' }) => {
 
     const handlerProductSelected = (product) => {
         setProductSelected({ ...product });
+        if (window.innerWidth < 960) {
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
     };
 
     const handlerRemoveProduct = (id) => {
+        const product = products.find((p) => p.id === id);
         Swal.fire({
             title: '¿Eliminar producto?',
-            text: 'Esta acción no se puede deshacer.',
+            text: `Se eliminará "${product.name}". Esta acción no se puede deshacer.`,
             icon: 'warning',
             showCancelButton: true,
-            confirmButtonColor: '#d33',
-            cancelButtonColor: '#6c757d',
-            confirmButtonText: 'Sí, eliminar',
+            confirmButtonColor: '#B3372B',
+            cancelButtonColor: '#5A6E68',
+            confirmButtonText: 'Eliminar',
             cancelButtonText: 'Cancelar',
         }).then(async (result) => {
             if (result.isConfirmed) {
@@ -94,14 +110,14 @@ export const ProductsApp = ({ title = 'Gestión de Productos' }) => {
                     if (productSelected.id === id) {
                         setProductSelected({ ...initialSelected });
                     }
-                    Swal.fire({
-                        title: 'Eliminado!',
-                        icon: 'success',
-                        timer: 1500,
-                        showConfirmButton: false,
-                    });
+                    Toast.fire({ icon: 'success', title: 'Producto eliminado' });
                 } catch (err) {
-                    Swal.fire('Error', 'No se pudo eliminar el producto.', 'error');
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'No se pudo eliminar',
+                        text: 'Revisa tu conexión e inténtalo de nuevo.',
+                        confirmButtonColor: '#0F7B63',
+                    });
                     console.error(err);
                 }
             }
@@ -112,70 +128,113 @@ export const ProductsApp = ({ title = 'Gestión de Productos' }) => {
         p.name.toLowerCase().includes(search.trim().toLowerCase())
     );
 
+    const loaded = !loading && !error;
+
     return (
-        <div className="container my-4">
-            <div className="d-flex justify-content-between align-items-center border-bottom pb-3 mb-4">
-                <h2 className="mb-0">{title}</h2>
-                <span className="badge bg-secondary fs-6">
-                    {products.length} {products.length === 1 ? 'producto' : 'productos'}
-                </span>
-            </div>
-
-            <div className="row g-4">
-                <div className="col-12 col-md-4">
-                    <div className="card shadow-sm p-3">
-                        <ProductForm
-                            handlerAdd={handlerAddProduct}
-                            productSelected={productSelected}
-                        />
+        <>
+            <header className="topbar">
+                <div className="wrap topbar-inner">
+                    <div>
+                        <h1 className="topbar-title">{title}</h1>
+                        <p className="topbar-subtitle">React, Spring Boot y PostgreSQL</p>
                     </div>
+                    <nav className="topbar-links" aria-label="Código fuente">
+                        <a className="topbar-link" href="https://github.com/Keviin010/react-products" target="_blank" rel="noreferrer">
+                            Código del frontend
+                        </a>
+                        <a className="topbar-link" href="https://github.com/Keviin010/products-backend" target="_blank" rel="noreferrer">
+                            Código del backend
+                        </a>
+                    </nav>
                 </div>
+            </header>
 
-                <div className="col-12 col-md-8">
-                    {loading && (
-                        <div className="text-center mt-4">
-                            <div className="spinner-border text-primary" role="status" />
-                            <p className="mt-2 text-muted">Cargando productos...</p>
-                            <p className="small text-muted">Si el servidor estaba dormido, puede tardar hasta un minuto.</p>
-                        </div>
-                    )}
+            <main className="wrap main">
+                <div className="layout">
+                    <ProductForm
+                        handlerAdd={handlerAddProduct}
+                        productSelected={productSelected}
+                    />
 
-                    {error && (
-                        <div className="alert alert-danger d-flex justify-content-between align-items-center">
-                            {error}
-                            <button className="btn btn-sm btn-outline-danger" onClick={getProducts}>
-                                Reintentar
-                            </button>
-                        </div>
-                    )}
+                    <section aria-labelledby="catalog-title">
+                        <div className="list-header">
+                            <div>
+                                <h2 id="catalog-title" className="list-title">Catálogo</h2>
+                                {loaded && (
+                                    <p className="list-count">
+                                        {products.length} {products.length === 1 ? 'producto' : 'productos'}
+                                    </p>
+                                )}
+                            </div>
 
-                    {!loading && !error && products.length === 0 && (
-                        <div className="alert alert-warning">No hay productos registrados.</div>
-                    )}
-
-                    {!loading && !error && products.length > 0 && (
-                        <>
-                            <input
-                                className="form-control mb-3"
-                                placeholder="Buscar por nombre"
-                                value={search}
-                                onChange={(e) => setSearch(e.target.value)}
-                            />
-
-                            {filteredProducts.length === 0 ? (
-                                <div className="alert alert-warning">Ningún producto coincide con la búsqueda.</div>
-                            ) : (
-                                <ProductTable
-                                    products={filteredProducts}
-                                    handlerProductSelected={handlerProductSelected}
-                                    handlerRemoveProduct={handlerRemoveProduct}
+                            {loaded && products.length > 0 && (
+                                <input
+                                    type="search"
+                                    className="search"
+                                    placeholder="Buscar por nombre"
+                                    aria-label="Buscar por nombre"
+                                    value={search}
+                                    onChange={(e) => setSearch(e.target.value)}
                                 />
                             )}
-                        </>
-                    )}
+                        </div>
+
+                        {loading && (
+                            <div className="state" role="status">
+                                <div className="spinner" />
+                                <p className="state-title">Conectando con el servidor…</p>
+                                <p className="state-text">Si estaba dormido, puede tardar hasta un minuto en despertar.</p>
+                                {attempt > 1 && (
+                                    <p className="state-text">Intento {attempt} de {MAX_ATTEMPTS}</p>
+                                )}
+                            </div>
+                        )}
+
+                        {error && (
+                            <div className="state state-error" role="alert">
+                                <p className="state-title">No pudimos conectar con el servidor</p>
+                                <p className="state-text">Revisa que el backend esté corriendo y vuelve a intentarlo.</p>
+                                <button className="button button-primary" onClick={getProducts}>
+                                    Reintentar
+                                </button>
+                            </div>
+                        )}
+
+                        {loaded && products.length === 0 && (
+                            <div className="state state-empty">
+                                <p className="state-title">Todavía no hay productos</p>
+                                <p className="state-text">Crea el primero con el formulario.</p>
+                            </div>
+                        )}
+
+                        {loaded && products.length > 0 && filteredProducts.length === 0 && (
+                            <div className="state state-empty">
+                                <p className="state-title">Ningún producto coincide con «{search.trim()}»</p>
+                                <p className="state-text">Prueba con otro nombre.</p>
+                            </div>
+                        )}
+
+                        {loaded && filteredProducts.length > 0 && (
+                            <ProductList
+                                products={filteredProducts}
+                                selectedId={productSelected.id}
+                                savedId={savedId}
+                                handlerProductSelected={handlerProductSelected}
+                                handlerRemoveProduct={handlerRemoveProduct}
+                            />
+                        )}
+                    </section>
                 </div>
-            </div>
-        </div>
+            </main>
+
+            <footer className="wrap footer">
+                <p>Hecho por Kevin Royo</p>
+                <nav className="footer-links" aria-label="Contacto">
+                    <a href="https://github.com/Keviin010" target="_blank" rel="noreferrer">GitHub</a>
+                    <a href="https://www.linkedin.com/in/kevin-royo-09a427216/" target="_blank" rel="noreferrer">LinkedIn</a>
+                </nav>
+            </footer>
+        </>
     );
 };
 

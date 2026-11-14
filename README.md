@@ -1,25 +1,31 @@
 # react-products
 
-Interfaz de gestión de productos (CRUD) hecha con React, Vite y Bootstrap, conectada a una API de Spring Boot.
+Interfaz de gestión de productos (CRUD) hecha con React y Vite, con CSS propio, conectada a una API de Spring Boot.
+
+**Demo en línea:** https://react-products-sooty.vercel.app
+
+El backend gratuito se apaga tras 15 minutos sin visitas. Si la página tarda en cargar, es el servidor despertando: espera hasta un minuto.
 
 ![React](https://img.shields.io/badge/React-18-%2361DAFB.svg?style=flat&logo=react&logoColor=white)
 ![Vite](https://img.shields.io/badge/Vite-6-%23646CFF.svg?style=flat&logo=vite&logoColor=white)
-![Bootstrap](https://img.shields.io/badge/Bootstrap-5-%237952B3.svg?style=flat&logo=bootstrap&logoColor=white)
+![CSS](https://img.shields.io/badge/CSS-3-%231572B6.svg?style=flat&logo=css3&logoColor=white)
 ![Axios](https://img.shields.io/badge/Axios-1.7-5A29E4?style=flat)
 
 Backend: [products-backend](https://github.com/Keviin010/products-backend) (Spring Boot y PostgreSQL).
 
 ## Qué hace
 
-- Lista los productos en una tabla con el precio en pesos colombianos.
+- Lista los productos con el precio en pesos colombianos dentro de una etiqueta.
+- Muestra una vista previa de la etiqueta mientras escribes en el formulario.
 - Crea, edita y elimina productos, con avisos de SweetAlert2 y confirmación antes de borrar.
 - Valida el formulario antes de enviarlo y conserva lo escrito si el servidor falla.
 - Busca productos por nombre.
 - Si el servidor está dormido, lo indica y reintenta la conexión cada 4 segundos hasta por un minuto.
+- Se adapta a computador y celular.
 
 ## Tecnologías
 
-React 18, Vite, Bootstrap 5, Axios y SweetAlert2.
+React 18, Vite, CSS propio, Axios y SweetAlert2. Las fuentes (Familjen Grotesk y Barlow Condensed) se instalan con npm, así que no dependen de ningún servicio externo.
 
 ## Cómo ejecutarlo en tu computador
 
