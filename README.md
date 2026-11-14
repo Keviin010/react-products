@@ -6,8 +6,6 @@ Interfaz de gestión de productos (CRUD) hecha con React y Vite, con CSS propio,
 
 El backend gratuito se apaga tras 15 minutos sin visitas. Si la página tarda en cargar, es el servidor despertando: espera hasta un minuto.
 
-![Vista de la aplicación](captura.png)
-
 ![React](https://img.shields.io/badge/React-18-%2361DAFB.svg?style=flat&logo=react&logoColor=white)
 ![Vite](https://img.shields.io/badge/Vite-6-%23646CFF.svg?style=flat&logo=vite&logoColor=white)
 ![CSS](https://img.shields.io/badge/CSS-3-%231572B6.svg?style=flat&logo=css3&logoColor=white)
